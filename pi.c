@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     MPI_Barrier(MPI_COMM_WORLD);
     begin = MPI_Wtime();
 
-    //Each process will caculate a part of the sum, N/size in a part
+    //Each process will caculate a part of the sum, N/size in a part : Round roll bin
     for (i = rank; i < N; i += size)
     {
         x2 = d2 * i * i;
