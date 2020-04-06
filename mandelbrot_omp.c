@@ -30,7 +30,7 @@ int main()
     omp_set_dynamic(1);
     omp_set_num_threads(4);
 
-#pragma omp parallel shared(pixels)
+#pragma omp parallel
     {
         /* Pixel counters */
         int i, j;
@@ -38,10 +38,6 @@ int main()
         for (j = 0; j < ImageHeight; j++)
         {
             double Cy = CyMin + j * PixelHeight;
-            if (fabs(Cy) < PixelHeight / 2)
-            {
-                Cy = 0.0; // Main antenna
-            }
             for (i = 0; i < ImageWidth; i++)
             {
                 double Cx = CxMin + i * PixelWidth;
@@ -51,19 +47,20 @@ int main()
                 double Zx2 = Zx * Zx;
                 double Zy2 = Zy * Zy;
                 /* */
-                int Iteration;
+                int n;
                 /* Maximum number of iterations. */
-                const int IterationMax = 5000;
+                const int N = 5000;
 
-                for (Iteration = 0; Iteration < IterationMax && ((Zx2 + Zy2) < 4); Iteration++)
-                { //
+                for (n = 0; n < N && ((Zx2 + Zy2) < 2 * 2); n++)
+                {
                     Zy = 2 * Zx * Zy + Cy;
                     Zx = Zx2 - Zy2 + Cx;
                     Zx2 = Zx * Zx;
                     Zy2 = Zy * Zy;
                 };
                 /* compute  pixel color and write it to file */
-                if (Iteration >= IterationMax)
+                /* If finish loop, |Zn| < 2, put to Mandel_set*/
+                if (n == N)
                 {
                     /* interior */
                     pixels[j * ImageWidth + i][0] = 0;
@@ -77,13 +74,12 @@ int main()
                 else
                 {
                     /* exterior */
-                    /* pixels[j * ImageWidth + i][0] = ((double)(Iteration - log2(log2(sqrt(Zx2 + Zy2)))) / IterationMax) * MaxColorComponentValue; */
-                    pixels[j * ImageWidth + i][0] = Iteration >> 8;
-                    pixels[j * ImageWidth + i][1] = Iteration & 255;
-                    pixels[j * ImageWidth + i][2] = Iteration >> 8;
-                    pixels[j * ImageWidth + i][3] = Iteration & 255;
-                    pixels[j * ImageWidth + i][4] = Iteration >> 8;
-                    pixels[j * ImageWidth + i][5] = Iteration & 255;
+                    pixels[j * ImageWidth + i][0] = n >> 8;
+                    pixels[j * ImageWidth + i][1] = n & 255;
+                    pixels[j * ImageWidth + i][2] = n >> 8;
+                    pixels[j * ImageWidth + i][3] = n & 255;
+                    pixels[j * ImageWidth + i][4] = n >> 8;
+                    pixels[j * ImageWidth + i][5] = n & 255;
                 }
             }
         }
