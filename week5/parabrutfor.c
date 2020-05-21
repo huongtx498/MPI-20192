@@ -66,7 +66,6 @@ int main(int argc, char **argv)
 						if (checks(one, hash) || checks(two, hash) || checks(three, hash) || checks(four, hash))
 						{
 							printResult(password, hash);
-							// printf("\nin thread: %d", omp_get_thread_num());
 						}
 					}
 		}

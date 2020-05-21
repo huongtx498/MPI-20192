@@ -7,6 +7,7 @@
         "string_view": "c",
         "string": "c",
         "system_error": "c",
-        "thread": "c"
+        "thread": "c",
+        "mpi.h": "c"
     }
 }
